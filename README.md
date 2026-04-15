@@ -225,7 +225,7 @@ npm run dev              # → http://localhost:3000
 
 ### 4. Open the Dashboard
 
-Visit **http://localhost:3000/dashboard** and watch the simulation unfold in real time.
+Visit **https://stadium-os-795750315067.us-central1.run.app** and watch the simulation unfold in real time.
 
 ---
 
@@ -297,8 +297,6 @@ gcloud run deploy stadiumos \
   --set-env-vars NODE_ENV=production,FIREBASE_PROJECT_ID=$PROJECT_ID \
   --memory 512Mi
 ```
-
-See [DEPLOY.md](./DEPLOY.md) for the full step-by-step guide.
 
 ---
 
