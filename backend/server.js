@@ -16,7 +16,7 @@ app.use(express.json());
 // ──────────────────────────────────────────────
 // Health check
 // ──────────────────────────────────────────────
-app.get('/', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({
     status: 'StadiumOS backend running',
     version: '1.0.0',
