@@ -332,10 +332,10 @@ See [DEPLOY.md](./DEPLOY.md) for the full step-by-step guide.
 
 ## 📝 License
 
-This project was built for hackathon demonstration purposes.
+This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
 
 ---
 
 <div align="center">
-  <strong>Built with ❤️ for hackathon 2026</strong>
+  <strong>Built with ❤️ by <a href="https://github.com/arpitpandey0307">Arpit Pandey</a></strong>
 </div>
