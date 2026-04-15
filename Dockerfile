@@ -9,7 +9,7 @@ FROM node:20-alpine AS frontend-build
 
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm install
 COPY frontend/ ./
 ENV NEXT_PUBLIC_API_URL=""
 RUN npm run build
@@ -21,13 +21,13 @@ WORKDIR /app
 
 # Install backend dependencies
 COPY backend/package*.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 # Copy backend source
 COPY backend/ ./
 
 # Copy the Next.js standalone build from Stage 1
-COPY --from=frontend-build /app/frontend/.next/standalone/frontend ./frontend-standalone
+COPY --from=frontend-build /app/frontend/.next/standalone ./frontend-standalone
 COPY --from=frontend-build /app/frontend/.next/static ./frontend-standalone/.next/static
 COPY --from=frontend-build /app/frontend/public ./frontend-standalone/public
 
