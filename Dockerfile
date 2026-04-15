@@ -11,6 +11,7 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
+ENV NEXT_PUBLIC_API_URL=""
 RUN npm run build
 
 # Stage 2: Production runtime
@@ -26,7 +27,7 @@ RUN npm ci --omit=dev
 COPY backend/ ./
 
 # Copy the Next.js standalone build from Stage 1
-COPY --from=frontend-build /app/frontend/.next/standalone ./frontend-standalone
+COPY --from=frontend-build /app/frontend/.next/standalone/frontend ./frontend-standalone
 COPY --from=frontend-build /app/frontend/.next/static ./frontend-standalone/.next/static
 COPY --from=frontend-build /app/frontend/public ./frontend-standalone/public
 
@@ -36,5 +37,5 @@ ENV PORT=8080
 
 EXPOSE 8080
 
-# Start the Express backend (serves API + static frontend)
+# Start the Express backend (serves API + proxies to Next.js)
 CMD ["node", "server.js"]

@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { fetchDecisions } from '@/lib/api';
+import { fetchDecisions, fetchZones } from '@/lib/api';
 import { usePolling } from '@/hooks/usePolling';
 import MetricsPanel from '@/components/MetricsPanel';
 import DecisionPanel from '@/components/DecisionPanel';
@@ -27,7 +27,7 @@ export default function DashboardPage() {
         <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-center">
           <p className="text-lg font-semibold text-red-400">Connection Error</p>
           <p className="mt-1 text-sm text-gray-400">
-            Cannot reach backend at http://localhost:8080
+            Cannot reach backend API
           </p>
           <p className="mt-2 text-xs text-gray-500">
             Make sure the backend is running: <code className="text-gray-400">cd backend && npm run dev</code>
@@ -105,10 +105,7 @@ export default function DashboardPage() {
  */
 function ZoneMapWrapper() {
   const fetcher = useCallback(async () => {
-    const res = await fetch(
-      (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080') + '/api/zones'
-    );
-    return res.json();
+    return fetchZones();
   }, []);
 
   const { data: zones } = usePolling(fetcher, 2000);

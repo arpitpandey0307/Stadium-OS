@@ -79,14 +79,41 @@ const path = require('path');
 const fs = require('fs');
 
 const FRONTEND_DIR = path.join(__dirname, 'frontend-standalone');
-if (process.env.NODE_ENV === 'production' && fs.existsSync(FRONTEND_DIR)) {
-  // Serve Next.js static assets
-  app.use('/_next', express.static(path.join(FRONTEND_DIR, '.next/static')));
-  app.use(express.static(path.join(FRONTEND_DIR, 'public')));
+const NEXT_SERVER = path.join(FRONTEND_DIR, 'server.js');
 
-  // All non-API routes → Next.js handler
-  const nextHandler = require(path.join(FRONTEND_DIR, 'server.js'));
-  console.log('   📦 Serving frontend from standalone build');
+if (process.env.NODE_ENV === 'production' && fs.existsSync(NEXT_SERVER)) {
+  // Start Next.js standalone server on a different port
+  const { spawn } = require('child_process');
+  const NEXT_PORT = 3000;
+
+  const nextProcess = spawn('node', [NEXT_SERVER], {
+    env: { ...process.env, PORT: String(NEXT_PORT), HOSTNAME: '0.0.0.0' },
+    stdio: 'inherit',
+  });
+
+  nextProcess.on('error', (err) => {
+    console.error('   ❌ Failed to start Next.js:', err.message);
+  });
+
+  // Proxy all non-API routes to Next.js
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+
+    const http = require('http');
+    const proxyReq = http.request(
+      { hostname: '127.0.0.1', port: NEXT_PORT, path: req.url, method: req.method, headers: req.headers },
+      (proxyRes) => {
+        res.writeHead(proxyRes.statusCode, proxyRes.headers);
+        proxyRes.pipe(res);
+      }
+    );
+    proxyReq.on('error', () => {
+      res.status(502).json({ error: 'Frontend not ready yet' });
+    });
+    req.pipe(proxyReq);
+  });
+
+  console.log('   📦 Next.js frontend will start on internal port', NEXT_PORT);
 }
 
 // ──────────────────────────────────────────────
